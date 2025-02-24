@@ -1,0 +1,178 @@
+#include <stdio.h>
+#include <stdlib.h>
+// Muhamad Fattah Atallah Soerianata 
+// 2502002583
+struct tnode {
+    int x;
+    tnode *next;
+    tnode *prev;
+} *head, *tail, *curr;
+
+
+void push_front(int value) {
+    tnode *node = (tnode*)malloc(sizeof(tnode));
+    node->x = value;
+    
+    if(head == NULL) {
+        head = tail = node;
+        node->next = NULL;
+        node->prev = NULL;
+    } else {
+        node->next = head;
+        head->prev = node;
+        head = node;
+        head->prev = NULL;
+    }
+}
+
+
+void push_back(int value) {
+    tnode *node = (tnode*)malloc(sizeof(tnode));
+    node->x = value;
+    
+    if(head == NULL) {
+        head = tail = node;
+        tail->next = NULL;
+        tail->prev = NULL;
+    } else {
+        tail->next = node;
+        node->prev = tail;
+        tail = node;
+        tail->next = NULL;
+    }
+}
+
+
+void push_mid(int value, int searchKey) {
+    tnode *node = (tnode*)malloc(sizeof(tnode));
+    node->x = value;
+    
+    if(head == NULL) {
+        head = tail = node;
+        node->next = NULL;
+        node->prev = NULL;
+        return;
+    }
+    
+    tnode *curr = head;
+    while(curr != NULL) {
+        if(curr->x == searchKey) {
+            node->next = curr->next;
+            node->prev = curr;
+            if(curr->next != NULL) {
+                curr->next->prev = node;
+            } else {
+                tail = node;
+            }
+            curr->next = node;
+            return;
+        }
+        curr = curr->next;
+    }
+    printf("Data %d tidak ditemukan\n", searchKey);
+    free(node); 
+}
+
+
+void del_front() {
+    if(head == NULL) {
+        printf("Tidak ada data\n");
+        return;
+    }
+    
+    tnode *temp = head;
+    head = head->next;
+    if(head != NULL) {
+        head->prev = NULL;
+    } else {
+        tail = NULL;
+    }
+    free(temp);
+}
+
+
+void del_back() {
+    if(head == NULL) {
+        printf("Tidak ada data\n");
+        return;
+    }
+    
+    tnode *temp = tail;
+    tail = tail->prev;
+    if(tail != NULL) {
+        tail->next = NULL;
+    } else {
+        head = NULL;
+    }
+    free(temp);
+}
+
+
+void del_mid(int searchKey) {
+    if (head == NULL) {
+        printf("Tidak ada data\n");
+        return;
+    }
+
+    tnode *curr = head;
+    while (curr != NULL) {
+        if (curr->x == searchKey) {
+            if (curr == head) {
+                del_front();
+            } else if (curr == tail) {
+                del_back();
+            } else {
+                curr->prev->next = curr->next;
+                curr->next->prev = curr->prev;
+                free(curr);
+            }
+            return;
+        }
+        curr = curr->next;
+    }
+    printf("Data %d tidak ditemukan\n", searchKey);
+}
+
+
+void printList() {
+    if(head == NULL) {
+        printf("Tidak ada data\n");
+        return;
+    }
+    
+    tnode *curr = head;
+    while(curr != NULL) {
+        printf("%d ", curr->x);
+        curr = curr->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    printf("Linked List\n");
+    
+    push_front(76);
+    push_front(90);
+    push_front(45);
+    
+    printf("List awal: ");
+    printList(); 
+    
+    push_mid(33, 90);
+    printf("Setelah menambahkan 33 setelah 90: ");
+    printList(); 
+    
+    del_front();
+    printf("Setelah menghapus depan: ");
+    printList(); 
+    
+    del_back();
+    printf("Setelah menghapus belakang: ");
+    printList(); 
+    
+    del_mid(90);
+    printf("Setelah menghapus 90: ");
+    printList(); 
+    
+    return 0;
+}
